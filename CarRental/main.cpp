@@ -15,3 +15,41 @@
 
 
 */
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+#include "tableManip.h"
+
+using namespace std;
+
+const string dbdir = "c:\\CarRentalDB\\";
+
+int main() {
+	int choice = 0;
+	createDeleteTable crT;
+	manipTable mT;
+
+
+
+	do {
+		cout << "Choose your option: " << endl;
+		cout << "1 - Create new table" << endl;
+		cout << "2 - Add data to an existing table" << endl;
+		cout << "0 - exit" << endl;
+		cout << "Your choice: ";
+		cin >> choice;
+		switch (choice) {
+		case 1:
+			crT.createTable(dbdir);
+			break;
+		case 2:
+			mT.addData(dbdir);
+			break;
+		default:
+			cout << "Choose a number from the choices presented above." << endl;
+			break;
+		}
+	} while (choice != 0);
+}
