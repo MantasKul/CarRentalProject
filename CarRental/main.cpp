@@ -16,6 +16,7 @@
 
 */
 
+<<<<<<< HEAD
 #include <iostream>
 #include <vector>
 #include <string>
@@ -53,3 +54,6 @@ int main() {
 		}
 	} while (choice != 0);
 }
+=======
+//Adding some changes for the memes
+>>>>>>> 88bce0aee3225c7af39a63554d419db8e906050a
