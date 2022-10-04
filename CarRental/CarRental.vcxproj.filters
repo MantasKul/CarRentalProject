@@ -18,13 +18,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sqlite-amalgamation-3390300\sqlite3.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="addDeleteTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="manipTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqlite-amalgamation-3390300\sqlite3.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="selectData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

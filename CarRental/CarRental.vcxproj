@@ -127,10 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sqlite-amalgamation-3390300\sqlite3.c" />
+    <ClCompile Include="..\sqlite-amalgamation-3390300\sqlite3.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="addDeleteTable.cpp" />
     <ClCompile Include="manipTable.cpp" />
+    <ClCompile Include="selectData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,0 +1,9 @@
+?Delete Table function
+Add new car info to the table
+Hash password creating user
+Data manipulation (Car renting (car is taken, is free), users (add currently rented car, remove once rent is done))
+
+carList columns:
+ID, MAKE, MODEL, COLOR, LICENSE_PLATE, AVAILABILITY, NOTES
+ID should be auto incremented
+AVAILABILITY should be 1 by default

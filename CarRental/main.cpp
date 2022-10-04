@@ -1,46 +1,35 @@
-/*
-	Car list that has:
-	- carID
-	- License plat
-	- Make
-	- Model
-	- Color
-	- Availablility
-	
-	Renters list:
-	- rentID
-	- Full name (split in two?)
-	- Car's ID that is being rented (any other car info?)
-	- Perhaps other notes, like known dents/other issues (for company and renter insurance)
-
-
-*/
-
-<<<<<<< HEAD
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sqlite3.h>
 
 #include "tableManip.h"
 
-using namespace std;
-
-const string dbdir = "c:\\CarRentalDB\\";
+const std::string dbdir = "c:\\CarRentalDB\\";
 
 int main() {
 	int choice = 0;
 	createDeleteTable crT;
 	manipTable mT;
+	selectData sD;
 
-
+	std::string name = "Welcome ";
+	int currentlyLogedin = 0;
 
 	do {
-		cout << "Choose your option: " << endl;
-		cout << "1 - Create new table" << endl;
-		cout << "2 - Add data to an existing table" << endl;
-		cout << "0 - exit" << endl;
-		cout << "Your choice: ";
-		cin >> choice;
+		std::cout << "//----------------------------------------------------------------\\\\" << std::endl;
+		std::cout << name << " Choose your option: " << std::endl;
+		std::cout << "1 - Create new table" << std::endl;
+		std::cout << "2 - Add data to an existing table" << std::endl;
+		std::cout << "3 - Print the list of cars" << std::endl;
+		std::cout << "4 - Register" << std::endl;
+		std::cout << "5 - Login" << std::endl;
+		std::cout << "6 - Disconnect" << std::endl;
+		std::cout << "0 - exit" << std::endl;
+		std::cout << "//----------------------------------------------------------------\\\\" << std::endl;
+		std::cout << "Your choice: ";
+		std::cin >> choice;
+		std::cout << "//----------------------------------------------------------------\\\\" << std::endl;
 		switch (choice) {
 		case 1:
 			crT.createTable(dbdir);
@@ -48,12 +37,33 @@ int main() {
 		case 2:
 			mT.addData(dbdir);
 			break;
+		case 3:
+			sD.getCarList(dbdir);
+			break;
+		case 4:
+			if (currentlyLogedin == 1) {
+				std::cout << "Cannot use this function when loged in, please disconnect to register a new user" << std::endl;
+				break;
+			}
+			mT.registerUser(dbdir);
+			break;
+		case 5:
+			if (currentlyLogedin == 1) {
+				std::cout << "Cannot use this function when loged in, please disconnect to register a new user" << std::endl;
+				break;
+			}
+			sD.logIn(dbdir);
+			name += sD.getLogedInName();
+			currentlyLogedin = 1;
+			break;
+		case 6:
+			std::cout << "Disconnected successfully" << std::endl;
+			currentlyLogedin = 0;
+			name = "Welcome ";
+			break;
 		default:
-			cout << "Choose a number from the choices presented above." << endl;
+			std::cout << "Choose a number from the choices presented above." << std::endl;
 			break;
 		}
 	} while (choice != 0);
 }
-=======
-//Adding some changes for the memes
->>>>>>> 88bce0aee3225c7af39a63554d419db8e906050a

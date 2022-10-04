@@ -5,46 +5,53 @@
 #include <cstring>
 #include <sqlite3.h>
 #include <fstream>
+#include <algorithm>
 
-int createDeleteTable::createTable(const string dir) {
+// Should add so it would add to a file which has the list, file could be stored in the same CarRentalDB folder
+// Return should get from the file as well
+
+int createDeleteTable::createTable(const std::string dir) {
 	sqlite3* DB;
 	const char* d; // dir with tableName will be combined, used in sqlite3_open()
+	//std::vector<std::string> tableNameList = getTableNameList();
 
-	string tableName;
+	std::string tableName;
 	int columnNo;
-	string columnInput;
-	vector<string> columnInfo;
+	std::string columnInput;
+	std::vector<std::string> columnInfo;
 
 	// Choosing name and column amount
-	cout << "Choose a name for the table: ";
-	cin >> tableName;
-	// combinging directory, tableName and adding ".db", added all that to d to use int sqlite3_open()
-	string temp = dir + tableName + ".db";
-	d = temp.c_str();
-	// Checking if file exists
-	ifstream ifile;
-	ifile.open(temp);
-	if (ifile) {
-		cout << "Table with such name already exists" << endl;
-		ifile.close();
+	std::cout << "Choose a name for the table: ";
+	std::cin >> tableName;
+
+	// Checking if table with such name exists exists
+	/*if (find(tableNameList.begin(), tableNameList.end(), tableName) != tableNameList.end()) {
+		cout << "Table with such name already exists";
 		return 0;
 	}
-	ifile.close();
+	else {
+		addTableNameList(tableName);
 
-	cout << "Choose how many columns you want in your table: ";
-	cin >> columnNo;
-	cin.ignore(); // Added so the getlin() later wouldn't skip first for cycle input
+	}*/
+	// combinging directory, tableName and adding ".db", added all that to d to use int sqlite3_open()
+
+	std::string temp = dir + "carRental" + ".db";
+	d = temp.c_str();
+
+	std::cout << "Choose how many columns you want in your table: ";
+	std::cin >> columnNo;
+	std::cin.ignore(); // Added so the getlin() later wouldn't skip first for cycle input
 
 	//adding each column to columnInfo vector
 	for (int i = 0; i < columnNo; i++) {
 		printf("Enter %d column name, type, other information:\n", i);
-		getline(cin, columnInput);
+		std::getline(std::cin, columnInput);
 		columnInfo.push_back(columnInput);
 	}
 
 	//creating query string to create a table
-	string sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (";
-	for (string s : columnInfo) {
+	std::string sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (";
+	for (std::string s : columnInfo) {
 		sql += s + ", ";
 	}
 	sql.pop_back(); sql.pop_back(); // Removing ", " that has been added in the for cycle at the end, unnecessary
@@ -59,15 +66,15 @@ int createDeleteTable::createTable(const string dir) {
 		exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
 
 		if (exit != SQLITE_OK) {
-			cerr << "Error Create Table" << endl;
+			std::cerr << "Error Create Table" << std::endl;
 			sqlite3_free(messageError);
 		}
 		else
-			cout << "Table create Successfully" << endl;
+			std::cout << "Table create Successfully" << std::endl;
 		sqlite3_close(DB);
 	}
-	catch (const exception& e) {
-		cerr << e.what();
+	catch (const std::exception& e) {
+		std::cerr << e.what();
 	}
 
 	return 0;
