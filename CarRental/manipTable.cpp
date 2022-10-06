@@ -5,9 +5,12 @@
 
 static int callback(void* NotUsed, int argc, char** argv, char** azColName);
 static int getTableCol(void* NotUsed, int argc, char** argv, char** azColName);
+static int availabilityCheck(void* NotUsed, int argc, char** argv, char** azColName);
+static int empty(void* NotUsed, int argc, char** argv, char** azColName);
 
 int nameExists;
 std::string tableCol;
+int availability;
 
 int manipTable::addData(const std::string dir) {
 	sqlite3* DB;
@@ -99,6 +102,70 @@ int manipTable::registerUser(const std::string dir) {
 
 	sqlite3_close(DB);
 
+	return 0;
+}
+
+int manipTable::rentACar(const std::string* dir, std::string name) {
+	sqlite3* DB;
+	const char* d;
+	std::string sql;
+	std::string temp = *dir + "carRental.db";
+	d = temp.c_str();
+
+	selectData sD;
+
+	int choice;
+
+	int exit = sqlite3_open(d, &DB);
+
+	//add query which checks if user already has a car rented (RENTED_CAR != -1)
+
+	std::cout << "Enter the ID of the car which you want to rent: ";
+	std::cin >> choice;
+	sql = "SELECT AVAILABILITY FROM carList WHERE ID =" + std::to_string(choice);
+	exit = sqlite3_exec(DB, sql.c_str(), availabilityCheck, NULL, NULL);
+	
+	if (availability == 0) {
+		std::cout << "The chosen car is taken" << std::endl;
+		return 0;
+	}
+
+	sql =	"UPDATE carList SET AVAILABILITY=0 WHERE ID=" + std::to_string(choice) + ";"
+			"UPDATE userList SET RENTED_CAR=" + std::to_string(choice) + " WHERE NAME=\'" + name + "\';";
+	exit = sqlite3_exec(DB, sql.c_str(), empty, NULL, NULL);
+
+	sqlite3_close(DB);
+
+	return 0;
+}
+
+int manipTable::removeRent(const std::string* dir) {
+	sqlite3* DB;
+	const char* d;
+	std::string sql;
+	std::string temp = *dir + "carRental.db";
+	d = temp.c_str();
+
+	std::string name;
+
+	std::cout << "Choose user's name which you want to remove car rent of: ";
+	std::cin >> name;
+
+	sql = "UPDATE carList SET AVAILABILITY=1 WHERE ID=(SELECT RENTED_CAR FROM userList WHERE NAME=\'" + name + "\');"
+		"UPDATE userList SET RENTED_CAR=-1 WHERE NAME=\'" + name + "\'";
+
+	int exit = sqlite3_open(d, &DB);
+	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, NULL);
+	sqlite3_close(DB);
+	return 0;
+}
+
+static int empty(void* NotUsed, int argc, char** argv, char** azColName) {
+	return 0;
+}
+
+static int availabilityCheck(void* NotUsed, int argc, char** argv, char** azColName) {
+	availability = *argv[0] - 48;
 	return 0;
 }
 

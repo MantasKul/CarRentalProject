@@ -15,6 +15,8 @@ class manipTable {
 public:
 	int addData(const std::string);
 	int registerUser(const std::string);
+	int rentACar(const std::string*, std::string name);
+	int removeRent(const std::string*);
 };
 
 // Data selection
@@ -23,6 +25,7 @@ class selectData {
 public:
 	void getCarList(const std::string);
 	int logIn(const std::string);
-
+	
+	void setLogedInName(std::string n) { logedInName = n; };
 	std::string getLogedInName() { return logedInName; };
 };

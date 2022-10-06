@@ -13,18 +13,21 @@ int main() {
 	manipTable mT;
 	selectData sD;
 
-	std::string name = "Welcome ";
+	std::string welcome = "Welcome ";
+	std::string name = "";
 	int currentlyLogedin = 0;
 
 	do {
 		std::cout << "//----------------------------------------------------------------\\\\" << std::endl;
-		std::cout << name << " Choose your option: " << std::endl;
-		std::cout << "1 - Create new table" << std::endl;
-		std::cout << "2 - Add data to an existing table" << std::endl;
+		std::cout << welcome << name << " Choose your option: " << std::endl;
+		std::cout << "1 - Create new table" << std::endl;							// Should only be available for admin account
+		std::cout << "2 - Add data to an existing table" << std::endl;				// Should only be available for admin account
 		std::cout << "3 - Print the list of cars" << std::endl;
-		std::cout << "4 - Register" << std::endl;
+		std::cout << "4 - Register" << std::endl;									// Available only if not loged in
 		std::cout << "5 - Login" << std::endl;
-		std::cout << "6 - Disconnect" << std::endl;
+		std::cout << "6 - Disconnect" << std::endl;									// Available only if loged in
+		std::cout << "7 - Rent a car" << std::endl;									// Available only if loged in
+		std::cout << "8 - Remove rent" << std::endl;								// Just for testing rente removal query, should be perhaps automatic or manual since it's car renting, could be like citybee press a button to stop the rent of current loged in user
 		std::cout << "0 - exit" << std::endl;
 		std::cout << "//----------------------------------------------------------------\\\\" << std::endl;
 		std::cout << "Your choice: ";
@@ -53,13 +56,23 @@ int main() {
 				break;
 			}
 			sD.logIn(dbdir);
-			name += sD.getLogedInName();
+			name = sD.getLogedInName();
 			currentlyLogedin = 1;
 			break;
 		case 6:
 			std::cout << "Disconnected successfully" << std::endl;
 			currentlyLogedin = 0;
-			name = "Welcome ";
+			name = "";
+			break;
+		case 7:
+			if (currentlyLogedin == 0) {
+				std::cout << "Cannot use this function when not loged in, please login" << std::endl;
+				break;
+			}
+			mT.rentACar(&dbdir, name);
+			break;
+		case 8:
+			mT.removeRent(&dbdir);
 			break;
 		default:
 			std::cout << "Choose a number from the choices presented above." << std::endl;

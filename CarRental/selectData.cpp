@@ -30,7 +30,7 @@ int selectData::logIn(const std::string dir) {
 		sql = "SELECT NAME FROM userList WHERE NAME=\'" + userName + "\' AND PASSWORD=\'" + userPass + "\';";
 		exit = sqlite3_exec(DB, sql.c_str(), loginCallback, NULL, NULL);
 		std::cout << "Loged in succesfully" << std::endl;
-		logedInName = name;
+		setLogedInName(userName);
 		return 1;
 	}
 
