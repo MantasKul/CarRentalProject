@@ -33,8 +33,8 @@ int createDeleteTable::createTable(const std::string dir) {
 		addTableNameList(tableName);
 
 	}*/
-	// combinging directory, tableName and adding ".db", added all that to d to use int sqlite3_open()
 
+	// combinging directory, tableName and adding ".db", added all that to d to use int sqlite3_open()
 	std::string temp = dir + "carRental" + ".db";
 	d = temp.c_str();
 

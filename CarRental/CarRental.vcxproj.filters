@@ -30,12 +30,27 @@
     <ClCompile Include="selectData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bcrypt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="blowfish.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tableManip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bcrypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="node_blf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="openbsd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

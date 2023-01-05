@@ -1,40 +1,64 @@
 #include "tableManip.h"
 #include <sqlite3.h>
 #include <iostream>
+#include <string>
+
+#include <conio.h> // Used for password masking windows only header
+
+#include "bcrypt.h"
 
 static int callback(void* NotUsed, int argc, char** argv, char** azColName);
 static int loginCallback(void* NotUsed, int argc, char** argv, char** azColName);
+static int getPass(void* NotUsed, int argc, char** argv, char** azColName);
 
 int logedIn = 0;
 std::string name;
+int isAdmin = 0;
+std::string hPass;
 
 int selectData::logIn(const std::string dir) {
 	sqlite3* DB;
 	std::string userName;
 	std::string userPass;
+	std::string hashedPass;
 	std::string sql;
 	std::string temp = dir + "carRental.db";
 	const char* d = temp.c_str();
+
+	logedIn = getIsLogedin();
 
 	int exit = sqlite3_open(d, &DB);
 	
 	std::cout << "Enter your username: ";
 	std::cin >> userName;
-	std::cout << "Enter your password: ";
-	std::cin >> userPass;
 
-	sql = "SELECT COUNT(*) FROM userList WHERE NAME=\'" + userName + "\' AND PASSWORD=\'" + userPass + "\';";
+	std::cin.ignore();
+	std::cout << "Enter your password: ";
+	// Masking the password input
+	while ((userPass += _getch()).at(userPass.size()) != '\r') {//
+		std::cout << "*";
+	}
+	userPass.pop_back(); // Removes Enter character
+	std::cout << std::endl;
+	hashedPass = bcrypt::generateHash(userPass);
+
+	sql = "SELECT COUNT(*) FROM userList WHERE NAME=\'" + userName + "\';";
 	exit = sqlite3_exec(DB, sql.c_str(), loginCallback, NULL, NULL);
 
+	sql = "SELECT PASSWORD FROM userList WHERE NAME=\"" + userName + "\";";
+	exit = sqlite3_exec(DB, sql.c_str(), getPass, NULL, NULL);
+	if (bcrypt::validatePassword(userPass, ::hPass)) logedIn = 1;
+	else logedIn = 0;
+
 	if (logedIn == 1) {
-		sql = "SELECT NAME FROM userList WHERE NAME=\'" + userName + "\' AND PASSWORD=\'" + userPass + "\';";
+		sql = "SELECT NAME, ADMIN FROM userList WHERE NAME=\'" + userName + "\' AND PASSWORD=\'" + hashedPass + "\';";
 		exit = sqlite3_exec(DB, sql.c_str(), loginCallback, NULL, NULL);
-		std::cout << "Loged in succesfully" << std::endl;
 		setLogedInName(userName);
+		setIsAdmin(::isAdmin);
 		return 1;
 	}
 
-	std::cout << "Failed to login" << std::endl;
+	std::cout << "Failed to login, username or password incorrect" << std::endl;
 	return 0;
 }
 
@@ -79,6 +103,17 @@ static int callback(void* NotUsed, int argc, char** argv, char** azColName) {
 }
 static int loginCallback(void* NotUsed, int argc, char** argv, char** azColName) {
 	name = argv[0];
+	if (logedIn) {
+		if (*argv[1] == '1') {
+			isAdmin = 1;
+		}
+		else isAdmin = 0;
+	}
 	if (*argv[0] == '1') logedIn = 1;
+	else logedIn = 0;
+	return 0;
+}
+static int getPass(void* NotUsed, int argc, char** argv, char** azColName) {
+	hPass = argv[0];
 	return 0;
 }

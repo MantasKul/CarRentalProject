@@ -3,6 +3,10 @@
 #include <sqlite3.h>
 #include <vector>
 
+#include <conio.h> // User to mask password input windows only header
+
+#include "bcrypt.h"
+
 static int callback(void* NotUsed, int argc, char** argv, char** azColName);
 static int getTableCol(void* NotUsed, int argc, char** argv, char** azColName);
 static int availabilityCheck(void* NotUsed, int argc, char** argv, char** azColName);
@@ -68,6 +72,7 @@ int manipTable::registerUser(const std::string dir) {
 	std::string sql;
 	std::string userName;
 	std::string userPassword;
+	std::string hashedPass;
 
 	std::string temp = dir + "carRental.db";
 	d = temp.c_str();
@@ -86,11 +91,19 @@ int manipTable::registerUser(const std::string dir) {
 		return 0;
 	}
 
+	std::cin.ignore();
 	std::cout << "Enter desired password: ";
-	std::cin >> userPassword;
+	// Masking password input
+	while ((userPassword += _getch()).at(userPassword.size()) != '\r') {//
+		std::cout << "*";
+	}
+	userPassword.pop_back(); // Removes Enter character
+	std::cout << std::endl;
+	// Hashing password using bcrypt
+	hashedPass = bcrypt::generateHash(userPassword);
 
 	// ID should be auto incremented, by default no car is rented on acc creation, rent time is 0
-	sql = "INSERT INTO userList (NAME, PASSWORD, RENTED_CAR, RENT_TIME) VALUES (\"" + userName + "\",\"" + userPassword + "\", -1, \"0\");";
+	sql = "INSERT INTO userList (NAME, PASSWORD, CARID, ADMIN, RENTTIME) VALUES (\"" + userName + "\",\"" + hashedPass + "\", -1, 0, \"0\");";
 
 	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
 	if (exit != SQLITE_OK) {
@@ -139,17 +152,12 @@ int manipTable::rentACar(const std::string* dir, std::string name) {
 	return 0;
 }
 
-int manipTable::removeRent(const std::string* dir) {
+int manipTable::removeRent(const std::string* dir, std::string name) {
 	sqlite3* DB;
 	const char* d;
 	std::string sql;
 	std::string temp = *dir + "carRental.db";
 	d = temp.c_str();
-
-	std::string name;
-
-	std::cout << "Choose user's name which you want to remove car rent of: ";
-	std::cin >> name;
 
 	sql = "UPDATE carList SET AVAILABILITY=1 WHERE ID=(SELECT RENTED_CAR FROM userList WHERE NAME=\'" + name + "\');"
 		"UPDATE userList SET RENTED_CAR=-1 WHERE NAME=\'" + name + "\'";
@@ -157,6 +165,29 @@ int manipTable::removeRent(const std::string* dir) {
 	int exit = sqlite3_open(d, &DB);
 	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, NULL);
 	sqlite3_close(DB);
+	return 0;
+}
+
+int manipTable::changeCarNotes(const std::string* dir) {
+	sqlite3* DB;
+	const char* d;
+	std::string sql;
+	std::string temp = *dir + "carRental.db";
+	d = temp.c_str();
+
+	int carId;
+	std::string newDescription;
+
+	std::cout << "Select the id of the car which description you want to change: ";
+	std::cin >> carId;
+	std::cout << "Enter the new description: " << std::endl;
+	std::cin >> newDescription;
+
+	sql = "UPDATE carList SET notes =\"" + newDescription + "\" WHERE ID=" + std::to_string(carId) + ";";
+	int exit = sqlite3_open(d, &DB);
+	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, NULL);
+	sqlite3_close(DB);
+
 	return 0;
 }
 
