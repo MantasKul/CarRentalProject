@@ -94,8 +94,18 @@ int manipTable::registerUser(const std::string dir) {
 	std::cin.ignore();
 	std::cout << "Enter desired password: ";
 	// Masking password input
-	while ((userPassword += _getch()).at(userPassword.size()) != '\r') {//
-		std::cout << "*";
+	char ch;
+	while ((ch = _getch()) != '\r') {
+		if (ch == '\b') {
+			if (userPassword.size() > 0) {
+				userPassword.erase(userPassword.size() - 1, 1);
+				std::cout << "\b \b";
+			}
+		}
+		else {
+			userPassword.push_back(ch);
+			std::cout << "*";
+		}
 	}
 	userPassword.pop_back(); // Removes Enter character
 	std::cout << std::endl;

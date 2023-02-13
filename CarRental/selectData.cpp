@@ -34,12 +34,25 @@ int selectData::logIn(const std::string dir) {
 
 	std::cin.ignore();
 	std::cout << "Enter your password: ";
-	// Masking the password input
-	while ((userPass += _getch()).at(userPass.size()) != '\r') {//
-		std::cout << "*";
+
+	// masking password
+	char ch;
+	while ((ch = _getch()) != '\r') {
+		if (ch == '\b') {
+			if (userPass.size() > 0) {
+				userPass.erase(userPass.size() - 1, 1);
+				std::cout << "\b \b";
+			}
+		}
+		else {
+			userPass.push_back(ch);
+			std::cout << "*";
+		}
 	}
 	userPass.pop_back(); // Removes Enter character
 	std::cout << std::endl;
+
+
 	hashedPass = bcrypt::generateHash(userPass);
 
 	sql = "SELECT COUNT(*) FROM userList WHERE NAME=\'" + userName + "\';";
